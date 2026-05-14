@@ -25,8 +25,9 @@ public class CameraAreaTrigger : MonoBehaviour
     [SerializeField, Min(0f)] private float followSmoothing = 8f;
 
     [Header("Follow Player")]
-    [SerializeField] private bool followHorizontalMovement = true;
-    [SerializeField] private bool followVerticalMovement;
+    [SerializeField] private bool followWorldX = true;
+    [SerializeField] private bool followWorldY;
+    [SerializeField] private bool followWorldZ = true;
     [SerializeField] private Vector3 followScale = Vector3.one;
 
     public int Priority => priority;
@@ -34,8 +35,7 @@ public class CameraAreaTrigger : MonoBehaviour
     public bool SmoothTransition => smoothTransition;
     public float TransitionDuration => transitionDuration;
     public float FollowSmoothing => followSmoothing;
-    public bool FollowHorizontalMovement => followHorizontalMovement;
-    public bool FollowVerticalMovement => followVerticalMovement;
+    public Vector3 FollowAxisMask => new Vector3(followWorldX ? 1f : 0f, followWorldY ? 1f : 0f, followWorldZ ? 1f : 0f);
     public Vector3 FollowScale => followScale;
 
     public Vector3 CameraPosition => cameraPose != null ? cameraPose.position : cameraPosition;

@@ -10361,6 +10361,14 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 5002517310641436601, guid: 9b5940538dc0abb42ac0996ab1282e9c, type: 3}
+      propertyPath: mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5002517310641436601, guid: 9b5940538dc0abb42ac0996ab1282e9c, type: 3}
+      propertyPath: smoothTransition
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8433219977597284486, guid: 9b5940538dc0abb42ac0996ab1282e9c, type: 3}
       propertyPath: m_Name
       value: StartAreaTrigger

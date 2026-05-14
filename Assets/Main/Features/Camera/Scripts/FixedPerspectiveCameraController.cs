@@ -195,17 +195,7 @@ public class FixedPerspectiveCameraController : MonoBehaviour
 
         Vector3 playerDelta = currentPlayer.position - followEntryPlayerPosition;
 
-        if (!currentZone.FollowHorizontalMovement)
-        {
-            playerDelta.x = 0f;
-            playerDelta.z = 0f;
-        }
-
-        if (!currentZone.FollowVerticalMovement)
-        {
-            playerDelta.y = 0f;
-        }
-
+        playerDelta = Vector3.Scale(playerDelta, currentZone.FollowAxisMask);
         playerDelta = Vector3.Scale(playerDelta, currentZone.FollowScale);
         targetPosition = followEntryCameraPosition + playerDelta;
     }

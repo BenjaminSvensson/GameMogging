@@ -75,6 +75,7 @@ MonoBehaviour:
   smoothTransition: 1
   transitionDuration: 0.55
   followSmoothing: 8
-  followHorizontalMovement: 1
-  followVerticalMovement: 1
+  followWorldX: 1
+  followWorldY: 1
+  followWorldZ: 1
   followScale: {x: 1, y: 1, z: 1}
