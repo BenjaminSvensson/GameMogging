@@ -15,8 +15,11 @@ public class CameraAreaTrigger : MonoBehaviour
 
     [Header("Camera Pose")]
     [SerializeField] private CameraMode mode = CameraMode.FixedPosition;
+    [Tooltip("Move and rotate this transform to set the exact camera view for this trigger.")]
     [SerializeField] private Transform cameraPose;
+    [HideInInspector]
     [SerializeField] private Vector3 cameraPosition;
+    [HideInInspector]
     [SerializeField] private Vector3 cameraEulerAngles;
 
     [Header("Transition")]
@@ -48,6 +51,7 @@ public class CameraAreaTrigger : MonoBehaviour
 
         cameraPosition = transform.position + new Vector3(0f, 3f, -6f);
         cameraEulerAngles = new Vector3(20f, 0f, 0f);
+        EnsureCameraPose();
     }
 
     private void OnValidate()
@@ -100,17 +104,37 @@ public class CameraAreaTrigger : MonoBehaviour
             return;
         }
 
-        cameraPose = null;
-        cameraPosition = UnityEngine.Camera.main.transform.position;
-        cameraEulerAngles = UnityEngine.Camera.main.transform.eulerAngles;
+        EnsureCameraPose();
+        cameraPose.SetPositionAndRotation(UnityEngine.Camera.main.transform.position, UnityEngine.Camera.main.transform.rotation);
     }
 
     [ContextMenu("Capture Camera Pose From This Transform")]
     private void CaptureFromThisTransform()
     {
-        cameraPose = null;
-        cameraPosition = transform.position;
-        cameraEulerAngles = transform.eulerAngles;
+        EnsureCameraPose();
+        cameraPose.SetPositionAndRotation(transform.position, transform.rotation);
+    }
+
+    [ContextMenu("Create Or Repair Camera Pose Empty")]
+    private void EnsureCameraPose()
+    {
+        if (cameraPose != null)
+        {
+            return;
+        }
+
+        Transform existingPose = transform.Find("Camera Pose");
+        if (existingPose != null)
+        {
+            cameraPose = existingPose;
+            return;
+        }
+
+        GameObject poseObject = new GameObject("Camera Pose");
+        cameraPose = poseObject.transform;
+        cameraPose.SetParent(transform);
+        cameraPose.position = cameraPosition;
+        cameraPose.rotation = Quaternion.Euler(cameraEulerAngles);
     }
 
     private void OnDrawGizmos()
@@ -129,5 +153,35 @@ public class CameraAreaTrigger : MonoBehaviour
         Gizmos.matrix = Matrix4x4.identity;
         Gizmos.DrawLine(transform.position, CameraPosition);
         Gizmos.DrawWireSphere(CameraPosition, 0.25f);
+        DrawCameraPoseArrow();
+    }
+
+    private void DrawCameraPoseArrow()
+    {
+        Vector3 arrowStart = CameraPosition;
+        Vector3 arrowForward = CameraRotation * Vector3.forward;
+
+        if (arrowForward.sqrMagnitude <= 0.001f)
+        {
+            return;
+        }
+
+        arrowForward.Normalize();
+
+        float arrowLength = 1.35f;
+        float arrowHeadLength = 0.35f;
+        float arrowHeadAngle = 25f;
+        Vector3 arrowEnd = arrowStart + arrowForward * arrowLength;
+        Vector3 rightHead = Quaternion.LookRotation(arrowForward) * Quaternion.Euler(0f, 180f + arrowHeadAngle, 0f) * Vector3.forward;
+        Vector3 leftHead = Quaternion.LookRotation(arrowForward) * Quaternion.Euler(0f, 180f - arrowHeadAngle, 0f) * Vector3.forward;
+        Vector3 upHead = Quaternion.LookRotation(arrowForward) * Quaternion.Euler(180f - arrowHeadAngle, 0f, 0f) * Vector3.forward;
+        Vector3 downHead = Quaternion.LookRotation(arrowForward) * Quaternion.Euler(180f + arrowHeadAngle, 0f, 0f) * Vector3.forward;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(arrowStart, arrowEnd);
+        Gizmos.DrawLine(arrowEnd, arrowEnd + rightHead * arrowHeadLength);
+        Gizmos.DrawLine(arrowEnd, arrowEnd + leftHead * arrowHeadLength);
+        Gizmos.DrawLine(arrowEnd, arrowEnd + upHead * arrowHeadLength);
+        Gizmos.DrawLine(arrowEnd, arrowEnd + downHead * arrowHeadLength);
     }
 }
