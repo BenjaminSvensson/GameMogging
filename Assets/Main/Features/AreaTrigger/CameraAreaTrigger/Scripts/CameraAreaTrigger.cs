@@ -9,6 +9,12 @@ public class CameraAreaTrigger : MonoBehaviour
         FollowPlayer
     }
 
+    public enum FollowStyle
+    {
+        MoveCamera,
+        RotateCamera
+    }
+
     [Header("Activation")]
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private int priority;
@@ -28,21 +34,31 @@ public class CameraAreaTrigger : MonoBehaviour
     [SerializeField, Min(0f)] private float followSmoothing = 8f;
 
     [Header("Follow Player")]
+    [SerializeField] private FollowStyle followStyle = FollowStyle.MoveCamera;
     [SerializeField] private bool followWorldX = true;
     [SerializeField] private bool followWorldY;
     [SerializeField] private bool followWorldZ = true;
     [SerializeField] private Vector3 followScale = Vector3.one;
+    [SerializeField] private Vector3 rotationTargetOffset = new Vector3(0f, 1f, 0f);
+
+    [Header("Player Movement Lock")]
+    [SerializeField] private bool lockPlayerWorldX;
+    [SerializeField] private bool lockPlayerWorldZ;
 
     public int Priority => priority;
     public CameraMode Mode => mode;
     public bool SmoothTransition => smoothTransition;
     public float TransitionDuration => transitionDuration;
     public float FollowSmoothing => followSmoothing;
+    public FollowStyle PlayerFollowStyle => followStyle;
     public Vector3 FollowAxisMask => new Vector3(followWorldX ? 1f : 0f, followWorldY ? 1f : 0f, followWorldZ ? 1f : 0f);
     public Vector3 FollowScale => followScale;
+    public Vector3 RotationTargetOffset => rotationTargetOffset;
+    public Vector3 PlayerMovementAxisMask => new Vector3(lockPlayerWorldX ? 0f : 1f, 1f, lockPlayerWorldZ ? 0f : 1f);
 
     public Vector3 CameraPosition => cameraPose != null ? cameraPose.position : cameraPosition;
     public Quaternion CameraRotation => cameraPose != null ? cameraPose.rotation : Quaternion.Euler(cameraEulerAngles);
+    public Vector3 FollowOrigin => transform.TransformPoint(GetColliderCenter());
 
     private void Reset()
     {
@@ -151,9 +167,15 @@ public class CameraAreaTrigger : MonoBehaviour
         Gizmos.DrawWireCube(center, size);
 
         Gizmos.matrix = Matrix4x4.identity;
-        Gizmos.DrawLine(transform.position, CameraPosition);
+        Gizmos.DrawLine(FollowOrigin, CameraPosition);
         Gizmos.DrawWireSphere(CameraPosition, 0.25f);
         DrawCameraPoseArrow();
+    }
+
+    private Vector3 GetColliderCenter()
+    {
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+        return boxCollider != null ? boxCollider.center : Vector3.zero;
     }
 
     private void DrawCameraPoseArrow()

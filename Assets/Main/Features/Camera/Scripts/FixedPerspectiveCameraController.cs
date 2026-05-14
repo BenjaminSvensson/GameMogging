@@ -17,8 +17,6 @@ public class FixedPerspectiveCameraController : MonoBehaviour
 
     private CameraAreaTrigger currentZone;
     private Transform currentPlayer;
-    private Vector3 followEntryPlayerPosition;
-    private Vector3 followEntryCameraPosition;
     private Vector3 transitionStartPosition;
     private Quaternion transitionStartRotation;
     private Vector3 targetPosition;
@@ -37,6 +35,8 @@ public class FixedPerspectiveCameraController : MonoBehaviour
             return instance.cameraToControl != null ? instance.cameraToControl.transform : instance.fallbackMovementReference;
         }
     }
+
+    public static CameraAreaTrigger ActiveZone => instance != null ? instance.currentZone : null;
 
     private void Awake()
     {
@@ -156,9 +156,6 @@ public class FixedPerspectiveCameraController : MonoBehaviour
 
         if (currentZone != null)
         {
-            followEntryPlayerPosition = currentPlayer != null ? currentPlayer.position : Vector3.zero;
-            followEntryCameraPosition = currentZone.CameraPosition;
-
             if (!currentZone.SmoothTransition)
             {
                 UpdateTargetPose();
@@ -193,11 +190,30 @@ public class FixedPerspectiveCameraController : MonoBehaviour
             return;
         }
 
-        Vector3 playerDelta = currentPlayer.position - followEntryPlayerPosition;
+        if (currentZone.PlayerFollowStyle == CameraAreaTrigger.FollowStyle.RotateCamera)
+        {
+            targetPosition = currentZone.CameraPosition;
+            targetRotation = GetRotationFollowTarget();
+            return;
+        }
 
+        Vector3 playerDelta = currentPlayer.position - currentZone.FollowOrigin;
         playerDelta = Vector3.Scale(playerDelta, currentZone.FollowAxisMask);
         playerDelta = Vector3.Scale(playerDelta, currentZone.FollowScale);
-        targetPosition = followEntryCameraPosition + playerDelta;
+        targetPosition = currentZone.CameraPosition + playerDelta;
+    }
+
+    private Quaternion GetRotationFollowTarget()
+    {
+        Vector3 lookTarget = currentPlayer.position + currentZone.RotationTargetOffset;
+        Vector3 lookDirection = lookTarget - currentZone.CameraPosition;
+
+        if (lookDirection.sqrMagnitude <= 0.001f)
+        {
+            return currentZone.CameraRotation;
+        }
+
+        return Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
     }
 
     private void MoveCamera()

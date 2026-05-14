@@ -76,10 +76,14 @@ MonoBehaviour:
   smoothTransition: 1
   transitionDuration: 0.55
   followSmoothing: 8
+  followStyle: 0
   followWorldX: 1
   followWorldY: 1
   followWorldZ: 1
   followScale: {x: 1, y: 1, z: 1}
+  rotationTargetOffset: {x: 0, y: 1, z: 0}
+  lockPlayerWorldX: 0
+  lockPlayerWorldZ: 0
 --- !u!1 &4288476337008602200
 GameObject:
   m_ObjectHideFlags: 0

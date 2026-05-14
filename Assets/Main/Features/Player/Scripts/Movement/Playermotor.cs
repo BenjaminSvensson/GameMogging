@@ -43,13 +43,17 @@ public class Playermotor : MonoBehaviour
         if (hasMovementInput)
         {
             moveDirection = (basisRight * moveInput.x) + (basisForward * moveInput.y);
+            moveDirection = ApplyTriggerMovementLocks(moveDirection);
 
             if (moveDirection.sqrMagnitude > 1f)
             {
                 moveDirection.Normalize();
             }
 
-            RotateTowards(moveDirection);
+            if (moveDirection.sqrMagnitude > 0.001f)
+            {
+                RotateTowards(moveDirection);
+            }
         }
 
         Vector3 velocity = (moveDirection * settings.WalkSpeed) + (Vector3.up * verticalVelocity);
@@ -109,6 +113,17 @@ public class Playermotor : MonoBehaviour
         }
 
         verticalVelocity += settings.Gravity * Time.deltaTime;
+    }
+
+    private Vector3 ApplyTriggerMovementLocks(Vector3 moveDirection)
+    {
+        CameraAreaTrigger activeZone = FixedPerspectiveCameraController.ActiveZone;
+        if (activeZone == null)
+        {
+            return moveDirection;
+        }
+
+        return Vector3.Scale(moveDirection, activeZone.PlayerMovementAxisMask);
     }
 
     private void RotateTowards(Vector3 moveDirection)
