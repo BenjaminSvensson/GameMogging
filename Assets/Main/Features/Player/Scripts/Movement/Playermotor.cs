@@ -1,16 +1,119 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(PlayerInputReader))]
 public class Playermotor : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private Movementsettings settings;
+
+    private CharacterController characterController;
+    private PlayerInputReader inputReader;
+    private Transform movementBasis;
+    private Vector3 basisForward;
+    private Vector3 basisRight;
+    private float verticalVelocity;
+    private bool hasLockedBasis;
+
+    private void Awake()
     {
-        
+        characterController = GetComponent<CharacterController>();
+        inputReader = GetComponent<PlayerInputReader>();
+
+        if (settings == null)
+        {
+            settings = GetComponent<Movementsettings>();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (settings == null)
+        {
+            return;
+        }
+
+        Vector2 moveInput = Vector2.ClampMagnitude(inputReader.MoveInput, 1f);
+        bool hasMovementInput = moveInput.sqrMagnitude > settings.InputDeadZone * settings.InputDeadZone;
+
+        UpdateMovementBasis(hasMovementInput);
+        ApplyGravity();
+
+        Vector3 moveDirection = Vector3.zero;
+
+        if (hasMovementInput)
+        {
+            moveDirection = (basisRight * moveInput.x) + (basisForward * moveInput.y);
+
+            if (moveDirection.sqrMagnitude > 1f)
+            {
+                moveDirection.Normalize();
+            }
+
+            RotateTowards(moveDirection);
+        }
+
+        Vector3 velocity = (moveDirection * settings.WalkSpeed) + (Vector3.up * verticalVelocity);
+        characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void UpdateMovementBasis(bool hasMovementInput)
+    {
+        if (!settings.LockMovementBasisUntilInputReleased || !hasMovementInput || !hasLockedBasis)
+        {
+            movementBasis = FixedPerspectiveCameraController.ActiveMovementReference;
+
+            if (movementBasis == null && UnityEngine.Camera.main != null)
+            {
+                movementBasis = UnityEngine.Camera.main.transform;
+            }
+
+            CalculateBasisVectors();
+            hasLockedBasis = hasMovementInput;
+        }
+
+        if (!hasMovementInput)
+        {
+            hasLockedBasis = false;
+        }
+    }
+
+    private void CalculateBasisVectors()
+    {
+        if (movementBasis == null)
+        {
+            basisForward = transform.forward;
+            basisRight = transform.right;
+            return;
+        }
+
+        basisForward = Vector3.ProjectOnPlane(movementBasis.forward, Vector3.up).normalized;
+        basisRight = Vector3.ProjectOnPlane(movementBasis.right, Vector3.up).normalized;
+
+        if (basisForward.sqrMagnitude <= 0.001f)
+        {
+            basisForward = transform.forward;
+        }
+
+        if (basisRight.sqrMagnitude <= 0.001f)
+        {
+            basisRight = Vector3.Cross(Vector3.up, basisForward).normalized;
+        }
+    }
+
+    private void ApplyGravity()
+    {
+        if (characterController.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = settings.GroundedStickForce;
+            return;
+        }
+
+        verticalVelocity += settings.Gravity * Time.deltaTime;
+    }
+
+    private void RotateTowards(Vector3 moveDirection)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, settings.RotationSpeed * Time.deltaTime);
     }
 }

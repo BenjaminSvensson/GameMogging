@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class Movementsettings : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Movement")]
+    [SerializeField, Min(0f)] private float walkSpeed = 3.2f;
+    [SerializeField, Min(0f)] private float rotationSpeed = 12f;
+    [SerializeField, Range(0f, 1f)] private float inputDeadZone = 0.12f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [Header("Gravity")]
+    [SerializeField] private float gravity = -25f;
+    [SerializeField] private float groundedStickForce = -2f;
+
+    [Header("Fixed Camera Feel")]
+    [Tooltip("Keeps the current input camera direction while the player holds movement, then updates when input is released.")]
+    [SerializeField] private bool lockMovementBasisUntilInputReleased = true;
+
+    public float WalkSpeed => walkSpeed;
+    public float RotationSpeed => rotationSpeed;
+    public float InputDeadZone => inputDeadZone;
+    public float Gravity => gravity;
+    public float GroundedStickForce => groundedStickForce;
+    public bool LockMovementBasisUntilInputReleased => lockMovementBasisUntilInputReleased;
 }
