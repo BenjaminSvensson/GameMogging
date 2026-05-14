@@ -56,7 +56,8 @@ public class Playermotor : MonoBehaviour
             }
         }
 
-        Vector3 velocity = (moveDirection * settings.WalkSpeed) + (Vector3.up * verticalVelocity);
+        float movementSpeed = inputReader.IsRunHeld ? settings.RunSpeed : settings.WalkSpeed;
+        Vector3 velocity = (moveDirection * movementSpeed) + (Vector3.up * verticalVelocity);
         characterController.Move(velocity * Time.deltaTime);
     }
 
@@ -90,18 +91,24 @@ public class Playermotor : MonoBehaviour
             return;
         }
 
-        basisForward = Vector3.ProjectOnPlane(movementBasis.forward, Vector3.up).normalized;
         basisRight = Vector3.ProjectOnPlane(movementBasis.right, Vector3.up).normalized;
 
-        if (basisForward.sqrMagnitude <= 0.001f)
+        if (basisRight.sqrMagnitude > 0.001f)
         {
-            basisForward = transform.forward;
+            basisForward = Vector3.Cross(basisRight, Vector3.up).normalized;
+            return;
         }
 
-        if (basisRight.sqrMagnitude <= 0.001f)
+        basisForward = Vector3.ProjectOnPlane(movementBasis.forward, Vector3.up).normalized;
+
+        if (basisForward.sqrMagnitude > 0.001f)
         {
             basisRight = Vector3.Cross(Vector3.up, basisForward).normalized;
+            return;
         }
+
+        basisForward = transform.forward;
+        basisRight = transform.right;
     }
 
     private void ApplyGravity()
