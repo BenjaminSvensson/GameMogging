@@ -12,6 +12,8 @@ public class Playermotor : MonoBehaviour
     private Vector3 basisForward;
     private Vector3 basisRight;
     private float verticalVelocity;
+    private float coyoteTimer;
+    private float jumpBufferTimer;
     private bool hasLockedBasis;
 
     private void Awake()
@@ -36,6 +38,8 @@ public class Playermotor : MonoBehaviour
         bool hasMovementInput = moveInput.sqrMagnitude > settings.InputDeadZone * settings.InputDeadZone;
 
         UpdateMovementBasis(hasMovementInput);
+        UpdateJumpTimers();
+        TryJump();
         ApplyGravity();
 
         Vector3 moveDirection = Vector3.zero;
@@ -120,6 +124,39 @@ public class Playermotor : MonoBehaviour
         }
 
         verticalVelocity += settings.Gravity * Time.deltaTime;
+    }
+
+    private void UpdateJumpTimers()
+    {
+        if (characterController.isGrounded)
+        {
+            coyoteTimer = settings.CoyoteTime;
+        }
+        else
+        {
+            coyoteTimer -= Time.deltaTime;
+        }
+
+        if (inputReader.ConsumeJumpPressed())
+        {
+            jumpBufferTimer = settings.JumpBufferTime;
+        }
+        else
+        {
+            jumpBufferTimer -= Time.deltaTime;
+        }
+    }
+
+    private void TryJump()
+    {
+        if (jumpBufferTimer <= 0f || coyoteTimer <= 0f)
+        {
+            return;
+        }
+
+        verticalVelocity = Mathf.Sqrt(settings.JumpHeight * -2f * settings.Gravity);
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
     }
 
     private Vector3 ApplyTriggerMovementLocks(Vector3 moveDirection)

@@ -6,10 +6,12 @@ public class PlayerInputReader : MonoBehaviour, PlayerInputActions.IPlayerAction
 {
     private PlayerInputActions inputActions;
     private bool interactPressedQueued;
+    private bool jumpPressedQueued;
 
     public Vector2 MoveInput { get; private set; }
     public bool IsRunHeld { get; private set; }
     public event Action InteractPressed;
+    public event Action JumpPressed;
 
     private void Awake()
     {
@@ -31,6 +33,20 @@ public class PlayerInputReader : MonoBehaviour, PlayerInputActions.IPlayerAction
     {
         inputActions.Player.RemoveCallbacks(this);
         inputActions.Dispose();
+    }
+
+    private void Update()
+    {
+        bool keyboardJumpPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool gamepadJumpPressed = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+        if (!keyboardJumpPressed && !gamepadJumpPressed)
+        {
+            return;
+        }
+
+        jumpPressedQueued = true;
+        JumpPressed?.Invoke();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -62,6 +78,17 @@ public class PlayerInputReader : MonoBehaviour, PlayerInputActions.IPlayerAction
         }
 
         interactPressedQueued = false;
+        return true;
+    }
+
+    public bool ConsumeJumpPressed()
+    {
+        if (!jumpPressedQueued)
+        {
+            return false;
+        }
+
+        jumpPressedQueued = false;
         return true;
     }
 }

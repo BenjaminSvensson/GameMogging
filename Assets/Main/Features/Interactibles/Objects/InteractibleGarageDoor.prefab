@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4378616860159605922}
   - component: {fileID: 5896028906750909308}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: InteractibleGarageDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4304738167478216816}
   - component: {fileID: 6116940886207878183}
   - component: {fileID: 1041370186239139276}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlaceholderGarageDoorPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,15 +174,18 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1041370186239139276
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4792927278989376053}
   m_Material: {fileID: 0}
   m_IncludeLayers:
