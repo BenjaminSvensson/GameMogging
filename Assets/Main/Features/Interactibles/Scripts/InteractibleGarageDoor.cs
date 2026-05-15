@@ -15,6 +15,9 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
     [SerializeField] private string closePrompt = "Close Garage Door";
     [SerializeField] private string lockedPrompt = "Locked";
     [SerializeField] private bool isLocked;
+    [SerializeField] private bool requiresKey;
+    [SerializeField] private string requiredKeyId = "Key_A";
+    [SerializeField] private bool unlockWhenCorrectKeyUsed = true;
 
     [Header("Door")]
     [SerializeField] private Transform doorPanel;
@@ -25,6 +28,7 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
 
     [Header("Events")]
     [SerializeField] private UnityEvent onLockedInteract;
+    [SerializeField] private UnityEvent onUnlockedWithKey;
     [SerializeField] private UnityEvent onOpened;
     [SerializeField] private UnityEvent onClosed;
     [SerializeField] private GameObjectEvent onInteractedBy;
@@ -35,7 +39,7 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
 
     public bool IsLocked => isLocked;
     public bool IsOpen => isOpen;
-    public string InteractionPrompt => isLocked ? lockedPrompt : isOpen ? closePrompt : openPrompt;
+    public string InteractionPrompt => IsLockedFor(null) ? lockedPrompt : isOpen ? closePrompt : openPrompt;
 
     private void Awake()
     {
@@ -62,11 +66,13 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
     {
         onInteractedBy?.Invoke(interactor);
 
-        if (isLocked)
+        if (IsLockedFor(interactor))
         {
             onLockedInteract?.Invoke();
             return;
         }
+
+        TryUnlockWithKey(interactor);
 
         if (isOpen)
         {
@@ -90,6 +96,48 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
     public void Unlock()
     {
         SetLocked(false);
+    }
+
+    private bool IsLockedFor(GameObject interactor)
+    {
+        if (!isLocked)
+        {
+            return false;
+        }
+
+        if (!requiresKey)
+        {
+            return true;
+        }
+
+        PlayerKeyInventory inventory = GetInventory(interactor);
+        return inventory == null || !inventory.HasKey(requiredKeyId);
+    }
+
+    private void TryUnlockWithKey(GameObject interactor)
+    {
+        if (!isLocked || !requiresKey)
+        {
+            return;
+        }
+
+        PlayerKeyInventory inventory = GetInventory(interactor);
+        if (inventory == null || !inventory.HasKey(requiredKeyId))
+        {
+            return;
+        }
+
+        onUnlockedWithKey?.Invoke();
+
+        if (unlockWhenCorrectKeyUsed)
+        {
+            Unlock();
+        }
+    }
+
+    private PlayerKeyInventory GetInventory(GameObject interactor)
+    {
+        return interactor != null ? interactor.GetComponentInParent<PlayerKeyInventory>() : null;
     }
 
     public void ToggleLocked()

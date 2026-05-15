@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputReader))]
+[RequireComponent(typeof(PlayerKeyInventory))]
 public class PlayerInteractor : MonoBehaviour
 {
     [Header("Detection")]

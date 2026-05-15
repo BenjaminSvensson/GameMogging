@@ -12,7 +12,8 @@ public class CameraAreaTrigger : MonoBehaviour
     public enum FollowStyle
     {
         MoveCamera,
-        RotateCamera
+        RotateCamera,
+        MoveAndRotateCamera
     }
 
     [Header("Activation")]

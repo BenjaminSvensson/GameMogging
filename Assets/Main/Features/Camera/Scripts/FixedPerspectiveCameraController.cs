@@ -193,7 +193,7 @@ public class FixedPerspectiveCameraController : MonoBehaviour
         if (currentZone.PlayerFollowStyle == CameraAreaTrigger.FollowStyle.RotateCamera)
         {
             targetPosition = currentZone.CameraPosition;
-            targetRotation = GetRotationFollowTarget();
+            targetRotation = GetRotationFollowTarget(targetPosition);
             return;
         }
 
@@ -201,12 +201,17 @@ public class FixedPerspectiveCameraController : MonoBehaviour
         playerDelta = Vector3.Scale(playerDelta, currentZone.FollowAxisMask);
         playerDelta = Vector3.Scale(playerDelta, currentZone.FollowScale);
         targetPosition = currentZone.CameraPosition + playerDelta;
+
+        if (currentZone.PlayerFollowStyle == CameraAreaTrigger.FollowStyle.MoveAndRotateCamera)
+        {
+            targetRotation = GetRotationFollowTarget(targetPosition);
+        }
     }
 
-    private Quaternion GetRotationFollowTarget()
+    private Quaternion GetRotationFollowTarget(Vector3 cameraPosition)
     {
         Vector3 lookTarget = currentPlayer.position + currentZone.RotationTargetOffset;
-        Vector3 lookDirection = lookTarget - currentZone.CameraPosition;
+        Vector3 lookDirection = lookTarget - cameraPosition;
 
         if (lookDirection.sqrMagnitude <= 0.001f)
         {
