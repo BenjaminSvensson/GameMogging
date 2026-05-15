@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1327355640084703705}
   - component: {fileID: 8398061370358988383}
+  - component: {fileID: 7629460586261263501}
   - component: {fileID: 5715390412387283886}
   - component: {fileID: 6406032801704746529}
-  - component: {fileID: 7629460586261263501}
   - component: {fileID: 4296908534972949074}
   m_Layer: 0
   m_Name: Player
@@ -50,11 +50,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movementsettings
   walkSpeed: 3.2
+  runSpeed: 5.4
   rotationSpeed: 12
   inputDeadZone: 0.12
   gravity: -25
   groundedStickForce: -2
   lockMovementBasisUntilInputReleased: 1
+--- !u!114 &7629460586261263501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4793360982295166136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ad0cd3537c4e1b821fb93b39f6108e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
+  interactionOrigin: {fileID: 1327355640084703705}
+  interactionRange: 1.8
+  interactionRadius: 0.6
+  interactableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  triggerInteraction: 2
+  requireLineOfSight: 0
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!143 &5715390412387283886
 CharacterController:
   m_ObjectHideFlags: 0
@@ -92,29 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c0a7e001e5b80f49a47f4e3e7275c0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
---- !u!114 &7629460586261263501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4793360982295166136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ad0cd3537c4e1b821fb93b39f6108e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
-  interactionOrigin: {fileID: 0}
-  interactionRange: 1.8
-  interactionRadius: 0.6
-  interactableLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  triggerInteraction: 2
-  requireLineOfSight: 0
-  obstructionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &4296908534972949074
 MonoBehaviour:
   m_ObjectHideFlags: 0
