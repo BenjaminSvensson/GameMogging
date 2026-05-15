@@ -10,6 +10,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerInputActions.IPlayerAction
 
     public Vector2 MoveInput { get; private set; }
     public bool IsRunHeld { get; private set; }
+    public bool IsJumpHeld { get; private set; }
     public event Action InteractPressed;
     public event Action JumpPressed;
 
@@ -37,8 +38,12 @@ public class PlayerInputReader : MonoBehaviour, PlayerInputActions.IPlayerAction
 
     private void Update()
     {
+        bool keyboardJumpHeld = Keyboard.current != null && Keyboard.current.spaceKey.isPressed;
+        bool gamepadJumpHeld = Gamepad.current != null && Gamepad.current.buttonSouth.isPressed;
         bool keyboardJumpPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
         bool gamepadJumpPressed = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+        IsJumpHeld = keyboardJumpHeld || gamepadJumpHeld;
 
         if (!keyboardJumpPressed && !gamepadJumpPressed)
         {

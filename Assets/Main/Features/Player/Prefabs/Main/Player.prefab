@@ -49,12 +49,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc5700a89684ea94ca0d282326403a07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movementsettings
-  walkSpeed: 3.2
-  runSpeed: 5.4
-  rotationSpeed: 12
+  walkSpeed: 4.2
+  runSpeed: 7.5
+  groundAcceleration: 48
+  groundDeceleration: 36
+  airAcceleration: 24
+  airControl: 7
+  airSpeedCap: 8.5
+  maxBunnyHopSpeed: 12.5
+  bunnyHopSpeedMultiplier: 1.04
+  rotationSpeed: 18
   inputDeadZone: 0.12
-  gravity: -25
+  gravity: -32
   groundedStickForce: -2
+  jumpHeight: 1.55
+  coyoteTime: 0.12
+  jumpBufferTime: 0.12
+  holdJumpToBunnyHop: 1
   lockMovementBasisUntilInputReleased: 1
 --- !u!114 &7629460586261263501
 MonoBehaviour:

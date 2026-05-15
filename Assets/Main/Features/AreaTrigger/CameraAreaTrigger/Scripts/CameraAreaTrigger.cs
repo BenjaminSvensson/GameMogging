@@ -156,7 +156,8 @@ public class CameraAreaTrigger : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = mode == CameraMode.FollowPlayer ? new Color(0.1f, 0.7f, 1f, 0.35f) : new Color(1f, 0.75f, 0.1f, 0.35f);
+        Color debugColor = GetDebugColor();
+        Gizmos.color = WithAlpha(debugColor, 0.35f);
         BoxCollider boxCollider = GetComponent<BoxCollider>();
         Vector3 center = boxCollider != null ? boxCollider.center : Vector3.zero;
         Vector3 size = boxCollider != null ? boxCollider.size : Vector3.one;
@@ -164,7 +165,7 @@ public class CameraAreaTrigger : MonoBehaviour
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawCube(center, size);
 
-        Gizmos.color = mode == CameraMode.FollowPlayer ? new Color(0.1f, 0.7f, 1f, 1f) : new Color(1f, 0.75f, 0.1f, 1f);
+        Gizmos.color = debugColor;
         Gizmos.DrawWireCube(center, size);
 
         Gizmos.matrix = Matrix4x4.identity;
@@ -177,6 +178,32 @@ public class CameraAreaTrigger : MonoBehaviour
     {
         BoxCollider boxCollider = GetComponent<BoxCollider>();
         return boxCollider != null ? boxCollider.center : Vector3.zero;
+    }
+
+    private Color GetDebugColor()
+    {
+        if (mode != CameraMode.FollowPlayer)
+        {
+            return new Color(1f, 0.75f, 0.1f, 1f);
+        }
+
+        switch (followStyle)
+        {
+            case FollowStyle.MoveCamera:
+                return new Color(0.1f, 0.7f, 1f, 1f);
+            case FollowStyle.RotateCamera:
+                return new Color(0.65f, 0.35f, 1f, 1f);
+            case FollowStyle.MoveAndRotateCamera:
+                return new Color(0.1f, 1f, 0.45f, 1f);
+            default:
+                return Color.white;
+        }
+    }
+
+    private Color WithAlpha(Color color, float alpha)
+    {
+        color.a = alpha;
+        return color;
     }
 
     private void DrawCameraPoseArrow()
