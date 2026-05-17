@@ -26,6 +26,17 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
     [SerializeField] private float openDuration = 0.6f;
     [SerializeField] private AnimationCurve motionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip[] openClips;
+    [SerializeField] private AudioClip[] closeClips;
+    [SerializeField] private AudioClip[] lockedClips;
+    [SerializeField] private AudioClip[] unlockClips;
+    [SerializeField, Range(0f, 1f)] private float openVolume = 0.9f;
+    [SerializeField, Range(0f, 1f)] private float closeVolume = 0.9f;
+    [SerializeField, Range(0f, 1f)] private float lockedVolume = 0.9f;
+    [SerializeField, Range(0f, 1f)] private float unlockVolume = 0.9f;
+
     [Header("Events")]
     [SerializeField] private UnityEvent onLockedInteract;
     [SerializeField] private UnityEvent onUnlockedWithKey;
@@ -48,6 +59,11 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
             doorPanel = transform;
         }
 
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
         closedLocalPosition = doorPanel.localPosition;
 
         if (startsOpen)
@@ -68,6 +84,7 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
 
         if (IsLockedFor(interactor))
         {
+            PlayRandomClip(lockedClips, lockedVolume);
             onLockedInteract?.Invoke();
             return;
         }
@@ -128,6 +145,7 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
         }
 
         onUnlockedWithKey?.Invoke();
+        PlayRandomClip(unlockClips, unlockVolume);
 
         if (unlockWhenCorrectKeyUsed)
         {
@@ -148,13 +166,42 @@ public class InteractibleGarageDoor : MonoBehaviour, IInteractable
     public void Open()
     {
         isOpen = true;
+        PlayRandomClip(openClips, openVolume);
         StartMove(GetOpenPosition(), onOpened);
     }
 
     public void Close()
     {
         isOpen = false;
+        PlayRandomClip(closeClips, closeVolume);
         StartMove(closedLocalPosition, onClosed);
+    }
+
+    private void PlayRandomClip(AudioClip[] clips, float volume)
+    {
+        AudioClip clip = GetRandomClip(clips);
+        if (clip == null)
+        {
+            return;
+        }
+
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(clip, volume);
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(clip, transform.position, volume);
+    }
+
+    private AudioClip GetRandomClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+        {
+            return null;
+        }
+
+        return clips[UnityEngine.Random.Range(0, clips.Length)];
     }
 
     private Vector3 GetOpenPosition()

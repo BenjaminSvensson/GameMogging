@@ -128,6 +128,8 @@ MonoBehaviour:
   keyId: Key_A
   interactionPrompt: Pick Up Key
   disableAfterPickup: 1
+  pickupClips: []
+  pickupVolume: 0.9
   onPickedUp:
     m_PersistentCalls:
       m_Calls: []

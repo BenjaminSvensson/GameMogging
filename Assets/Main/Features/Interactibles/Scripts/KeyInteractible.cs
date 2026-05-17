@@ -14,6 +14,10 @@ public class KeyInteractible : MonoBehaviour, IInteractable
     [SerializeField] private string interactionPrompt = "Pick Up Key";
     [SerializeField] private bool disableAfterPickup = true;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip[] pickupClips;
+    [SerializeField, Range(0f, 1f)] private float pickupVolume = 0.9f;
+
     [Header("Events")]
     [SerializeField] private UnityEvent onPickedUp;
     [SerializeField] private StringEvent onKeyPickedUp;
@@ -39,6 +43,7 @@ public class KeyInteractible : MonoBehaviour, IInteractable
         inventory.AddKey(keyId);
         isPickedUp = true;
 
+        PlayPickupSound();
         onPickedUp?.Invoke();
         onKeyPickedUp?.Invoke(keyId);
 
@@ -51,5 +56,26 @@ public class KeyInteractible : MonoBehaviour, IInteractable
     private PlayerKeyInventory GetInventory(GameObject interactor)
     {
         return interactor != null ? interactor.GetComponentInParent<PlayerKeyInventory>() : null;
+    }
+
+    private void PlayPickupSound()
+    {
+        AudioClip clip = GetRandomClip(pickupClips);
+        if (clip == null)
+        {
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(clip, transform.position, pickupVolume);
+    }
+
+    private AudioClip GetRandomClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+        {
+            return null;
+        }
+
+        return clips[UnityEngine.Random.Range(0, clips.Length)];
     }
 }

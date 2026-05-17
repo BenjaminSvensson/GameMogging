@@ -190,6 +190,15 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  audioSource: {fileID: 0}
+  openClips: []
+  closeClips: []
+  lockedClips: []
+  unlockClips: []
+  openVolume: 0.9
+  closeVolume: 0.9
+  lockedVolume: 0.9
+  unlockVolume: 0.9
   onLockedInteract:
     m_PersistentCalls:
       m_Calls: []
