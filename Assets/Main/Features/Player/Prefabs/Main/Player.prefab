@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 5715390412387283886}
   - component: {fileID: 6406032801704746529}
   - component: {fileID: 4296908534972949074}
+  - component: {fileID: 2165318627347001101}
+  - component: {fileID: 2165318627347001102}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -140,6 +142,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Playermotor
   settings: {fileID: 8398061370358988383}
+--- !u!82 &2165318627347001101
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4793360982295166136}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+--- !u!114 &2165318627347001102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4793360982295166136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82936c39a0664ac4bb5bd462f6a56a64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudioController
+  audioSource: {fileID: 2165318627347001101}
+  motor: {fileID: 4296908534972949074}
+  walkFootstepClips: []
+  runFootstepClips: []
+  minFootstepSpeed: 0.2
+  walkStepInterval: 0.48
+  runStepInterval: 0.32
+  footstepVolume: 0.8
+  footstepPitchVariance: 0.08
+  jumpClips: []
+  jumpVolume: 0.9
+  landClips: []
+  landVolume: 0.9
 --- !u!1001 &7993722895531745334
 PrefabInstance:
   m_ObjectHideFlags: 0

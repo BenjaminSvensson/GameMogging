@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -16,6 +17,14 @@ public class Playermotor : MonoBehaviour
     private float coyoteTimer;
     private float jumpBufferTimer;
     private bool hasLockedBasis;
+    private bool wasGrounded;
+
+    public event Action Jumped;
+    public event Action Landed;
+
+    public bool IsGrounded => characterController != null && characterController.isGrounded;
+    public bool IsRunning => inputReader != null && inputReader.IsRunHeld;
+    public float HorizontalSpeed => horizontalVelocity.magnitude;
 
     private void Awake()
     {
@@ -37,6 +46,7 @@ public class Playermotor : MonoBehaviour
 
         Vector2 moveInput = Vector2.ClampMagnitude(inputReader.MoveInput, 1f);
         bool hasMovementInput = moveInput.sqrMagnitude > settings.InputDeadZone * settings.InputDeadZone;
+        wasGrounded = characterController.isGrounded;
 
         UpdateMovementBasis(hasMovementInput);
         UpdateJumpTimers();
@@ -54,6 +64,11 @@ public class Playermotor : MonoBehaviour
         if ((collisionFlags & CollisionFlags.Above) != 0 && verticalVelocity > 0f)
         {
             verticalVelocity = 0f;
+        }
+
+        if (!wasGrounded && characterController.isGrounded)
+        {
+            Landed?.Invoke();
         }
     }
 
@@ -243,6 +258,7 @@ public class Playermotor : MonoBehaviour
         BoostBunnyHopSpeed();
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
+        Jumped?.Invoke();
     }
 
     private void BoostBunnyHopSpeed()
